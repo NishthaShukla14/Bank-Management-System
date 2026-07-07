@@ -1,0 +1,166 @@
+/* Google Fonts se modern font 'Poppins' import kar rahe hain */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #0f172a; /* Dark sleek slate background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* Extra colors ko screen se bahar nikalne se rokega */
+}
+
+/* 🔥 BACKGROUND GLOWING ORBS 🔥 */
+/* Ye pure CSS se bane animations hain jo card ke peeche rahenge */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px); /* Heavy blur isko glow effect dega */
+    z-index: 1; /* Card ke peeche bheja */
+    animation: float 8s infinite alternate ease-in-out;
+}
+
+/* Neon Blue Orb */
+body::before {
+    width: 400px;
+    height: 400px;
+    background: #3b82f6; 
+    top: -100px;
+    left: -100px;
+}
+
+/* Neon Purple Orb */
+body::after {
+    width: 350px;
+    height: 350px;
+    background: #8b5cf6; 
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -4s; /* Animation thoda alag time pe chalega */
+}
+
+/* Gole (Orbs) ko upar-neeche tairne (float) ka animation */
+@keyframes float {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(50px) scale(1.1); }
+}
+
+/* 🌟 TRUE GLASSMORPHISM CARD 🌟 */
+.login-container {
+    z-index: 10; /* Card ko orbs ke upar rakha */
+    position: relative;
+}
+
+.login-card {
+    background: rgba(255, 255, 255, 0.02); /* Ekdum transparent */
+    backdrop-filter: blur(25px); /* Strong glass blur */
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* 3D kaanch ka feel dene ke liye top aur left border thodi bright */
+    border-top: 1px solid rgba(255, 255, 255, 0.3); 
+    border-left: 1px solid rgba(255, 255, 255, 0.3); 
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5); /* Deep 3D shadow */
+    width: 400px;
+    text-align: center;
+    color: white;
+}
+
+.login-card h2 {
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.login-card p {
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 35px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Inputs ka premium look */
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 10px;
+    outline: none;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.input-group input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #3b82f6;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Premium Gradient Button */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+}
+
+.signup-link {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.signup-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.signup-link a:hover {
+    color: #8b5cf6;
+    text-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+}
