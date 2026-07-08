@@ -1,12 +1,16 @@
 import sqlite3
 
-# 1. Database connection (Ye apne aap 'bank.db' naam ki ek nayi file bana dega)
+# Database se connect kar rahe hain
 conn = sqlite3.connect('bank.db')
 cursor = conn.cursor()
 
-# 2. Users table create karne ki SQL Query
+# Purane tables ko delete kar rahe hain taaki naya structure fresh ban sake
+cursor.execute('DROP TABLE IF EXISTS Accounts')
+cursor.execute('DROP TABLE IF EXISTS Users')
+
+# 1. Users Table (User ki details ke liye)
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -14,14 +18,34 @@ CREATE TABLE IF NOT EXISTS Users (
 )
 ''')
 
-# 3. Ek default account insert karna taaki hum login test kar sakein
+# 2. Accounts Table (User ke balance ke liye)
+# Foreign Key use karke isko Users table se joda hai
 cursor.execute('''
-INSERT OR IGNORE INTO Users (full_name, email, password)
+CREATE TABLE Accounts (
+    account_number INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    balance REAL DEFAULT 0.0,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+)
+''')
+
+# 3. Dummy User insert kar rahe hain
+cursor.execute('''
+INSERT INTO Users (full_name, email, password)
 VALUES ('Nishtha Shukla', 'nishtha@bank.com', '12345')
 ''')
 
-# 4. Changes ko save karna aur connection close karna
+# Jo user abhi insert hua, uski ID nikal rahe hain
+user_id = cursor.lastrowid
+
+# 4. Us user ke liye ek Account khol rahe hain jisme Rs. 5000 starting balance hai
+cursor.execute('''
+INSERT INTO Accounts (user_id, balance)
+VALUES (?, 5000.0)
+''', (user_id,))
+
+# Changes ko save aur close kar rahe hain
 conn.commit()
 conn.close()
 
-print("BINGO! Database (bank.db) aur Users table successfully ban gaya hai!")
+print("DATABASE UPGRADED SUCCESFULLY! Users aur Accounts dono tables ban gaye hain.")
