@@ -6,103 +6,41 @@
     <title>SecureBank - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-        body {
-            min-height: 100vh;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        /* Background Animated Orbs */
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: -1;
-        }
-        body::before {
-            width: 400px; height: 400px; background: #3b82f6; top: -100px; left: -100px;
-        }
-        body::after {
-            width: 350px; height: 350px; background: #8b5cf6; bottom: -100px; right: -100px;
-        }
-        /* Glassmorphism Container */
-        .dashboard-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5);
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { min-height: 100vh; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        body::before, body::after { content: ''; position: absolute; border-radius: 50%; filter: blur(100px); z-index: -1; }
+        body::before { width: 400px; height: 400px; background: #3b82f6; top: -100px; left: -100px; }
+        body::after { width: 350px; height: 350px; background: #8b5cf6; bottom: -100px; right: -100px; }
+        
+        .dashboard-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 40px; border-radius: 20px; width: 100%; max-width: 600px; box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
         .header h2 { font-weight: 600; color: #00d2ff; }
-        .logout-btn {
-            background: rgba(255, 71, 87, 0.2);
-            color: #ff4757;
-            padding: 8px 15px;
-            border: 1px solid #ff4757;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
+        .logout-btn { background: rgba(255, 71, 87, 0.2); color: #ff4757; padding: 8px 15px; border: 1px solid #ff4757; border-radius: 8px; text-decoration: none; transition: 0.3s; }
         .logout-btn:hover { background: #ff4757; color: white; }
-        /* Balance Card */
-        .balance-card {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-        }
+        
+        .balance-card { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
         .balance-card h3 { font-size: 18px; font-weight: 400; opacity: 0.9; }
         .balance-card h1 { font-size: 40px; margin-top: 10px; }
-        /* Forms container */
-        .action-cards {
-            display: flex;
-            gap: 20px;
-        }
-        .action-card {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
+        
+        .action-cards { display: flex; gap: 20px; margin-bottom: 30px; }
+        .action-card { flex: 1; background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; }
         .action-card h4 { margin-bottom: 15px; color: #cbd5e1; }
-        .action-card input {
-            width: 100%; padding: 10px; margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white; border-radius: 8px; outline: none;
-        }
-        .action-card button {
-            width: 100%; padding: 10px; border: none; border-radius: 8px;
-            font-weight: 600; cursor: pointer; color: white; transition: 0.3s;
-        }
+        .action-card input { width: 100%; padding: 10px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 8px; outline: none; }
+        .action-card button { width: 100%; padding: 10px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; transition: 0.3s; }
         .btn-deposit { background: #2ed573; }
         .btn-deposit:hover { background: #26de81; box-shadow: 0 5px 15px rgba(46, 213, 115, 0.4); }
         .btn-withdraw { background: #ffa502; }
         .btn-withdraw:hover { background: #eccc68; box-shadow: 0 5px 15px rgba(255, 165, 2, 0.4); }
+        
+        /* Naya Transaction History CSS */
+        .history-section { background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .history-section h4 { color: #cbd5e1; margin-bottom: 15px; text-align: center; }
+        .history-list { list-style: none; }
+        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center;}
+        .history-item:last-child { border-bottom: none; }
+        .type-deposit { color: #2ed573; font-weight: bold; }
+        .type-withdraw { color: #ffa502; font-weight: bold; }
+        .history-date { color: #64748b; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -126,7 +64,6 @@
                     <button type="submit" class="btn-deposit">Deposit</button>
                 </form>
             </div>
-
             <div class="action-card">
                 <h4>Withdraw Money</h4>
                 <form action="/withdraw" method="POST">
@@ -135,6 +72,24 @@
                 </form>
             </div>
         </div>
+
+        <div class="history-section">
+            <h4>Recent Transactions</h4>
+            <ul class="history-list">
+                {% for t in transactions %}
+                <li class="history-item">
+                    <span class="{% if t[0] == 'Deposit' %}type-deposit{% else %}type-withdraw{% endif %}">
+                        {{ t[0] }}
+                    </span>
+                    <span>₹ {{ t[1] }}</span>
+                    <span class="history-date">{{ t[2][:16] }}</span>
+                </li>
+                {% else %}
+                <li style="text-align: center; color: #64748b;">No transactions yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
     </div>
 
 </body>

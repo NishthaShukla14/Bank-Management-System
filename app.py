@@ -2,10 +2,8 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
-# Session (login yaad rakhne) ke liye ek secret key zaroori hoti hai
 app.secret_key = 'super_secret_bank_key'
 
-# --- 1. LOGIN ROUTE ---
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -19,35 +17,34 @@ def login():
         conn.close()
         
         if user:
-            # Login Success! User ki details session me save kar lo
             session['user_id'] = user[0]
             session['user_name'] = user[1]
-            return redirect('/dashboard') # Seedha dashboard par bhej do
+            return redirect('/dashboard')
         else:
             return f"<h1 style='color: #ff4757; text-align: center; margin-top: 50px; font-family: sans-serif;'>Error: Invalid Email or Password! ❌</h1>"
             
     return render_template('index.html')
 
-# --- 2. DASHBOARD ROUTE ---
 @app.route('/dashboard')
 def dashboard():
-    # Agar koi bina login kiye direct dashboard kholna chahe, toh usko wapas login pe bhejo
     if 'user_id' not in session:
         return redirect('/')
         
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
-    # Logged-in user ka balance fetch karo
+    
+    # 1. Balance fetch karo
     cursor.execute("SELECT balance FROM Accounts WHERE user_id = ?", (session['user_id'],))
     account = cursor.fetchone()
-    conn.close()
-    
-    # Agar account hai toh balance lo, nahi toh 0.0 dikhao
     current_balance = account[0] if account else 0.0
     
-    return render_template('dashboard.html', user_name=session['user_name'], balance=current_balance)
+    # 2. Transaction history fetch karo (Latest 5 transactions)
+    cursor.execute("SELECT type, amount, date FROM Transactions WHERE user_id = ? ORDER BY date DESC LIMIT 5", (session['user_id'],))
+    transactions = cursor.fetchall()
+    conn.close()
+    
+    return render_template('dashboard.html', user_name=session['user_name'], balance=current_balance, transactions=transactions)
 
-# --- 3. DEPOSIT ROUTE (Paise Jama Karna) ---
 @app.route('/deposit', methods=['POST'])
 def deposit():
     if 'user_id' not in session:
@@ -56,14 +53,15 @@ def deposit():
     amount = float(request.form.get('amount'))
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
-    # SQL Update query se balance badhao
+    
+    # Balance update karo aur Transaction history me likho
     cursor.execute("UPDATE Accounts SET balance = balance + ? WHERE user_id = ?", (amount, session['user_id']))
+    cursor.execute("INSERT INTO Transactions (user_id, type, amount) VALUES (?, 'Deposit', ?)", (session['user_id'], amount))
+    
     conn.commit()
     conn.close()
-    
-    return redirect('/dashboard') # Update hone ke baad page refresh kar do
+    return redirect('/dashboard')
 
-# --- 4. WITHDRAW ROUTE (Paise Nikalna) ---
 @app.route('/withdraw', methods=['POST'])
 def withdraw():
     if 'user_id' not in session:
@@ -73,21 +71,21 @@ def withdraw():
     conn = sqlite3.connect('bank.db')
     cursor = conn.cursor()
     
-    # Pehle check karo ki account me utne paise hain bhi ya nahi
     cursor.execute("SELECT balance FROM Accounts WHERE user_id = ?", (session['user_id'],))
     current_balance = cursor.fetchone()[0]
     
+    # Agar balance kafi hai, tabhi withdraw karo aur history me likho
     if current_balance >= amount:
         cursor.execute("UPDATE Accounts SET balance = balance - ? WHERE user_id = ?", (amount, session['user_id']))
+        cursor.execute("INSERT INTO Transactions (user_id, type, amount) VALUES (?, 'Withdraw', ?)", (session['user_id'], amount))
         conn.commit()
     
     conn.close()
     return redirect('/dashboard')
 
-# --- 5. LOGOUT ROUTE ---
 @app.route('/logout')
 def logout():
-    session.clear() # User ka ID card (session) faad do
+    session.clear()
     return redirect('/')
 
 if __name__ == '__main__':
