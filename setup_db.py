@@ -5,10 +5,11 @@ conn = sqlite3.connect('bank.db')
 cursor = conn.cursor()
 
 # Purane tables ko delete kar rahe hain taaki naya structure fresh ban sake
+cursor.execute('DROP TABLE IF EXISTS Transactions')
 cursor.execute('DROP TABLE IF EXISTS Accounts')
 cursor.execute('DROP TABLE IF EXISTS Users')
 
-# 1. Users Table (User ki details ke liye)
+# 1. Users Table
 cursor.execute('''
 CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,8 +19,7 @@ CREATE TABLE Users (
 )
 ''')
 
-# 2. Accounts Table (User ke balance ke liye)
-# Foreign Key use karke isko Users table se joda hai
+# 2. Accounts Table
 cursor.execute('''
 CREATE TABLE Accounts (
     account_number INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,23 +29,33 @@ CREATE TABLE Accounts (
 )
 ''')
 
-# 3. Dummy User insert kar rahe hain
+# 3. Transactions Table (NAYA FEATURE)
+# Ye table har deposit aur withdraw ka record rakhegi
+cursor.execute('''
+CREATE TABLE Transactions (
+    transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    type TEXT NOT NULL, 
+    amount REAL NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+)
+''')
+
+# 4. Dummy Data Insert kar rahe hain
 cursor.execute('''
 INSERT INTO Users (full_name, email, password)
 VALUES ('Nishtha Shukla', 'nishtha@bank.com', '12345')
 ''')
-
-# Jo user abhi insert hua, uski ID nikal rahe hain
 user_id = cursor.lastrowid
 
-# 4. Us user ke liye ek Account khol rahe hain jisme Rs. 5000 starting balance hai
-cursor.execute('''
-INSERT INTO Accounts (user_id, balance)
-VALUES (?, 5000.0)
-''', (user_id,))
+# Account banaya aur Rs. 5000 dale
+cursor.execute('INSERT INTO Accounts (user_id, balance) VALUES (?, 5000.0)', (user_id,))
 
-# Changes ko save aur close kar rahe hain
+# Pehli opening transaction ko passbook me likh diya
+cursor.execute("INSERT INTO Transactions (user_id, type, amount) VALUES (?, 'Deposit', 5000.0)", (user_id,))
+
 conn.commit()
 conn.close()
 
-print("DATABASE UPGRADED SUCCESFULLY! Users aur Accounts dono tables ban gaye hain.")
+print("BINGO! Database Upgraded! Transactions table successfully add ho gayi hai.")
