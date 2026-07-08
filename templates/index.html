@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Management System - Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        .flash-container { width: 100%; margin-bottom: 15px; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; font-size: 14px; font-weight: 600; }
+        .flash-danger { background-color: rgba(255, 71, 87, 0.2); color: #ff4757; border: 1px solid #ff4757; }
+        .flash-success { background-color: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid #2ed573; }
+    </style>
 </head>
 <body>
 
@@ -12,6 +19,16 @@
         <div class="login-card">
             <h2>Welcome to SecureBank</h2>
             <p>Please login to your account</p>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-container">
+                        {% for category, message in messages %}
+                            <div class="flash flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
             
             <form action="/" method="POST">
                 <div class="input-group">

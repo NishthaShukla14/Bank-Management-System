@@ -18,6 +18,13 @@
         .logout-btn { background: rgba(255, 71, 87, 0.2); color: #ff4757; padding: 8px 15px; border: 1px solid #ff4757; border-radius: 8px; text-decoration: none; transition: 0.3s; }
         .logout-btn:hover { background: #ff4757; color: white; }
         
+        /* Flash Messages CSS */
+        .flash-container { margin-bottom: 20px; }
+        .flash { padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: center; font-size: 14px; font-weight: 600; animation: fadeIn 0.5s ease-in-out; }
+        .flash-success { background: rgba(46, 213, 115, 0.2); color: #2ed573; border: 1px solid #2ed573; }
+        .flash-warning { background: rgba(255, 165, 2, 0.2); color: #ffa502; border: 1px solid #ffa502; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         .balance-card { background: linear-gradient(135deg, #3b82f6, #8b5cf6); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
         .balance-card h3 { font-size: 18px; font-weight: 400; opacity: 0.9; }
         .balance-card h1 { font-size: 40px; margin-top: 10px; }
@@ -32,7 +39,6 @@
         .btn-withdraw { background: #ffa502; }
         .btn-withdraw:hover { background: #eccc68; box-shadow: 0 5px 15px rgba(255, 165, 2, 0.4); }
         
-        /* Naya Transaction History CSS */
         .history-section { background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .history-section h4 { color: #cbd5e1; margin-bottom: 15px; text-align: center; }
         .history-list { list-style: none; }
@@ -47,26 +53,38 @@
 
     <div class="dashboard-container">
         <div class="header">
-            <h2>Welcome, {{ user_name }}!</h2>
+            <h2>Welcome, {{ session['username'] }}!</h2>
             <a href="/logout" class="logout-btn">Logout</a>
         </div>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="balance-card">
             <h3>Current Balance</h3>
-            <h1>₹ {{ balance }}</h1>
+            <h1>₹ {{ balance | default('0.00', true) }}</h1>
         </div>
 
         <div class="action-cards">
             <div class="action-card">
                 <h4>Deposit Money</h4>
-                <form action="/deposit" method="POST">
+                <form action="/transfer" method="POST">
+                    <input type="hidden" name="type" value="Deposit">
                     <input type="number" name="amount" placeholder="Enter amount" min="1" required>
                     <button type="submit" class="btn-deposit">Deposit</button>
                 </form>
             </div>
             <div class="action-card">
                 <h4>Withdraw Money</h4>
-                <form action="/withdraw" method="POST">
+                <form action="/transfer" method="POST">
+                    <input type="hidden" name="type" value="Withdraw">
                     <input type="number" name="amount" placeholder="Enter amount" min="1" required>
                     <button type="submit" class="btn-withdraw">Withdraw</button>
                 </form>
@@ -76,17 +94,19 @@
         <div class="history-section">
             <h4>Recent Transactions</h4>
             <ul class="history-list">
-                {% for t in transactions %}
-                <li class="history-item">
-                    <span class="{% if t[0] == 'Deposit' %}type-deposit{% else %}type-withdraw{% endif %}">
-                        {{ t[0] }}
-                    </span>
-                    <span>₹ {{ t[1] }}</span>
-                    <span class="history-date">{{ t[2][:16] }}</span>
-                </li>
+                {% if transactions %}
+                    {% for t in transactions %}
+                    <li class="history-item">
+                        <span class="{% if t[0] == 'Deposit' %}type-deposit{% else %}type-withdraw{% endif %}">
+                            {{ t[0] }}
+                        </span>
+                        <span>₹ {{ t[1] }}</span>
+                        <span class="history-date">{{ t[2][:16] }}</span>
+                    </li>
+                    {% endfor %}
                 {% else %}
-                <li style="text-align: center; color: #64748b;">No transactions yet.</li>
-                {% endfor %}
+                    <li style="text-align: center; color: #64748b;">No transactions yet.</li>
+                {% endif %}
             </ul>
         </div>
         
