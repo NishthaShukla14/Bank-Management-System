@@ -34,7 +34,7 @@ def login():
     return render_template('index.html')
 
 # ==========================================
-# 2. SIGNUP ROUTE (Naya account banane ke liye)
+# 2. SIGNUP ROUTE ( For Creating new account )
 # ==========================================
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
