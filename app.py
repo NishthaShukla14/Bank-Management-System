@@ -4,7 +4,7 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 
-# Database se connect karne ka shortcut function
+# To connect Database Shortcut function
 def get_db():
     conn = sqlite3.connect('bank.db')
     return conn
